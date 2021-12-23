@@ -1,29 +1,31 @@
-name: "CI"
+# GitHub Actions Documentation: https://docs.github.com/en/actions
 
-on:
-  pull_request:
-  push:
-    branches:
-      - "v[0-9]+"
+name: "build"
+
+on: ["pull_request", "push"]
 
 jobs:
-
-  # Make sure build/ci work properly.
-  build:
-    name: "Build"
+  test:
+    name: "Expect Tests"
     runs-on: "ubuntu-latest"
     steps:
-      - uses: "actions/checkout@v2"
-      - uses: "shivammathur/setup-php@v2"
+      - name: "Checkout repository"
+        uses: "actions/checkout@v2"
+      - name: "Install expect"
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install expect
+      - name: "Set up PHP"
+        uses: "shivammathur/setup-php@v2"
         with:
           php-version: "latest"
-      - run: "npm install"
-      - run: "npm run all"
-      - uses: "codecov/codecov-action@v1"
+          tools: "composer:v2"
+          coverage: "none"
+      - name: "Run expect tests"
+        run: "composer test"
 
-  # Make sure the action works on a clean machine without building.
-  test:
-    name: "Test"
+  run:
+    name: "Run Action"
     runs-on: "${{ matrix.operating-system }}"
     strategy:
       matrix:
@@ -35,14 +37,31 @@ jobs:
           - "highest"
           - "locked"
         composer-options:
-          - "--working-dir subdirectory"
+          - "--ignore-platform-reqs"
+          - ""
+        working-directory:
+          - "subdirectory"
+          - ""
+        ignore-cache:
+          - "yes"
+          - ""
+        custom-cache-key:
+          - "my-super-custom-cache-key"
           - ""
     steps:
-      - uses: "actions/checkout@v2"
-      - uses: "shivammathur/setup-php@v2"
+      - name: "Checkout repository"
+        uses: "actions/checkout@v2"
+      - name: "Set up PHP"
+        uses: "shivammathur/setup-php@v2"
         with:
           php-version: "latest"
-      - uses: ./
+          tools: "composer:v2"
+          coverage: "none"
+      - name: "Run composer-install action"
+        uses: ./
         with:
           dependency-versions: "${{ matrix.dependency-versions }}"
           composer-options: "${{ matrix.composer-options }}"
+          working-directory: "${{ matrix.working-directory }}"
+          ignore-cache: "${{ matrix.ignore-cache }}"
+          custom-cache-key: "${{ matrix.custom-cache-key }}"

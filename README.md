@@ -38,8 +38,8 @@ the [Setup PHP](https://github.com/shivammathur/setup-php) action as a step.
 ```yaml
 - uses: "shivammathur/setup-php@v2"
   with:
-    php-version: "8.0"
-- uses: "ramsey/composer-install@v1"
+    php-version: "latest"
+- uses: "ramsey/composer-install@v2"
 ```
 
 :bulb: There is no need to set up a separate caching step since ramsey/composer-install
@@ -61,12 +61,12 @@ Valid values are:
   (equivalent to running `composer update`)
 
 * `lowest`: installs the lowest versions of Composer dependencies (equivalent
-  to running `composer update --prefer-lowest`)
+  to running `composer update --prefer-lowest --prefer-stable`)
 
 For example:
 
 ```yaml
-- uses: "ramsey/composer-install@v1"
+- uses: "ramsey/composer-install@v2"
   with:
     dependency-versions: "lowest"
 ```
@@ -80,33 +80,72 @@ options, you may use the `composer-options` input parameter.
 For example:
 
 ```yaml
-- uses: "ramsey/composer-install@v1"
+- uses: "ramsey/composer-install@v2"
   with:
-    composer-options: "--ignore-platform-reqs --working-dir=backend"
+    composer-options: "--ignore-platform-reqs --optimize-autoloader"
 ```
 
-### Alternate `composer.json` Locations
+#### working-directory
 
-If `composer.json` is not located in your repository root, or if you have
-multiple `composer.json` files located in various parts of your project, you may
-specify the `--working-dir` option as part of `composer-options`. You may use
-this step as many times as needed, if you have multiple `composer.json` files.
+The `working-directory` input parameter allows you to specify a different
+location for your `composer.json` file. For example, if your `composer.json` is
+located in `packages/acme-foo/`, use `working-directory` to tell
+ramsey/composer-install where to run things.
+
+```yaml
+- uses: "ramsey/composer-install@v2"
+  with:
+    working-directory: "packages/acme-foo"
+```
+
+You may use this step as many times as needed, if you have multiple
+`composer.json` files.
 
 For example:
 
 ```yaml
 # Install dependencies using composer.json in the root.
-- uses: "ramsey/composer-install@v1"
+- uses: "ramsey/composer-install@v2"
 
 # Install dependencies using composer.json in src/Component/Config/
-- uses: "ramsey/composer-install@v1"
+- uses: "ramsey/composer-install@v2"
   with:
-    composer-options: "--working-dir=src/Component/Config"
+    working-directory: "src/Component/Config"
 
 # Install dependencies using composer.json in src/Component/Validator/
-- uses: "ramsey/composer-install@v1"
+- uses: "ramsey/composer-install@v2"
   with:
-    composer-options: "--working-dir=src/Component/Validator"
+    working-directory: "src/Component/Validator"
+```
+
+#### ignore-cache
+
+If you have jobs for which you wish to completely ignore the caching step, you
+may use the `ignore-cache` input parameter. When present, ramsey/composer-install
+will neither read from nor write to the cache.
+
+Values of `'yes'`, `true`, or `1` will tell the action to ignore the cache. For
+any other value, the action will use the default behavior, which is to read from
+and store to the cache.
+
+```yaml
+- uses: "ramsey/composer-install@v2"
+  with:
+    ignore-cache: "yes"
+```
+
+#### custom-cache-key
+
+There may be times you wish to specify your own cache key. You may do so with
+the `custom-cache-key` input parameter. When provided, ramsey/composer-install
+will not use the auto-generated cache key, so if your `composer.json` or
+`composer.lock` files change, you'll need to update the custom cache key if you
+wish to update the cache.
+
+```yaml
+- uses: "ramsey/composer-install@v2"
+  with:
+    custom-cache-key: "my-custom-cache-key"
 ```
 
 ### Matrix Example
@@ -122,14 +161,14 @@ Here's an example of how you might use the `dependency-versions` and
 strategy:
   matrix:
     php:
-      - "7.3"
       - "7.4"
       - "8.0"
+      - "8.1"
     dependencies:
       - "lowest"
       - "highest"
     include:
-      - php-version: "8.1"
+      - php-version: "8.2"
         composer-options: "--ignore-platform-reqs"
 
 steps:
@@ -137,7 +176,7 @@ steps:
   - uses: "shivammathur/setup-php@v2"
     with:
       php-version: "${{ matrix.php }}"
-  - uses: "ramsey/composer-install@v1"
+  - uses: "ramsey/composer-install@v2"
     with:
       dependency-versions: "${{ matrix.dependencies }}"
       composer-options: "${{ matrix.composer-options }}"

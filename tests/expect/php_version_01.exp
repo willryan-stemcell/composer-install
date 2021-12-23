@@ -1,0 +1,9 @@
+#!/usr/bin/env -S expect -f
+
+set timeout 3
+spawn ../../bin/php_version.sh
+match_max 100000
+
+expect "::notice title=PHP Version::PHP version is '*.*.*'"
+expect "::set-output name=php::*.*.*"
+expect eof

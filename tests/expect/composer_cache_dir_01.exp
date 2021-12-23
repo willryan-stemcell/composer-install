@@ -1,0 +1,9 @@
+#!/usr/bin/env -S expect -f
+
+set timeout 3
+spawn ../../bin/composer_cache_dir.sh
+match_max 100000
+
+expect "::notice title=Composer Cache::Composer cache directory found at '*'"
+expect "::set-output name=directory::*"
+expect eof

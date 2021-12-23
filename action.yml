@@ -11,20 +11,71 @@ branding:
 inputs:
   dependency-versions:
     description: >-
-      The version of dependencies to prefer (lowest, highest, or locked).
+      The version of dependencies to prefer (`lowest`, `highest`, or `locked`).
     required: true
     default: "locked"
   composer-options:
     description: >-
-      Additional options to pass to Composer (e.g. --ignore-platform-reqs).
+      Additional options to pass to Composer (e.g. `--ignore-platform-reqs`).
     required: false
   working-directory:
     description: >-
-      Where the composer.json is located
+      The directory where composer.json is located, if it is not in the repository root.
+    required: false
+  ignore-cache:
+    description: >-
+      Whether to ignore the cache. Values accepted: `'yes'`, `true`, `1`.
+    required: false
+  custom-cache-key:
+    description: >-
+      A custom cache key to use instead of an auto-generated cache key.
     required: false
 
 runs:
-  using: "node12"
-  main: "dist/main/index.js"
-  post: "dist/post/index.js"
-  post-if: "success()"
+  using: "composite"
+  steps:
+    - name: "Determine PHP version"
+      id: "php-version"
+      shell: "bash"
+      run: "${GITHUB_ACTION_PATH}/bin/php_version.sh"
+
+    - name: "Determine whether we should ignore caching"
+      id: "should-cache"
+      shell: "bash"
+      run: "${GITHUB_ACTION_PATH}/bin/should_cache.sh \"${{ inputs.ignore-cache }}\""
+
+    - name: "Determine Composer cache directory"
+      id: "composer-cache"
+      if: steps.should-cache.outputs.do-cache == 1
+      shell: "bash"
+      run: "${GITHUB_ACTION_PATH}/bin/composer_cache_dir.sh"
+
+    - name: "Determine cache key"
+      id: "cache-key"
+      if: steps.should-cache.outputs.do-cache == 1
+      shell: "bash"
+      run: |
+        ${GITHUB_ACTION_PATH}/bin/cache_key.sh \
+          "${{ runner.os }}" \
+          "${{ steps.php-version.outputs.php }}" \
+          "${{ inputs.dependency-versions }}" \
+          "${{ inputs.composer-options }}" \
+          "${{ hashFiles('**/composer.json', '**/composer.lock') }}" \
+          "${{ inputs.custom-cache-key }}"
+
+    - name: "Cache Composer dependencies"
+      if: steps.should-cache.outputs.do-cache == 1
+      uses: "actions/cache@v2"
+      with:
+        path: "${{ steps.composer-cache.outputs.directory }}"
+        key: "${{ steps.cache-key.outputs.key }}"
+        restore-keys: |
+          ${{ env.CACHE_RESTORE_KEY }}
+
+    - name: "Install Composer dependencies"
+      shell: "bash"
+      run: |
+        ${GITHUB_ACTION_PATH}/bin/composer_install.sh \
+          "${{ inputs.dependency-versions }}" \
+          "${{ inputs.composer-options }}" \
+          "${{ inputs.working-directory }}"

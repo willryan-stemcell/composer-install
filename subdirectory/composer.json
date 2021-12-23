@@ -1,14 +1,14 @@
 {
-  "name": "ramsey/composer-install",
-  "description": "A GitHub Action to install and cache Composer dependencies.",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Ben Ramsey",
-      "email": "ben@benramsey.com"
+    "name": "ramsey/composer-install-subdirectory-test",
+    "description": "This tests installation using working-directory with this GitHub Action.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ben Ramsey",
+            "email": "ben@benramsey.com"
+        }
+    ],
+    "require": {
+        "symfony/console": "^6.0"
     }
-  ],
-  "require": {
-    "symfony/console": "^6.0"
-  }
 }

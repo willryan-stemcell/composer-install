@@ -1,0 +1,11 @@
+{
+    "name": "ramsey/composer-install-test-expect",
+    "description": "This exists within the test/expect directory to help expect tests.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ben Ramsey",
+            "email": "ben@benramsey.com"
+        }
+    ]
+}
