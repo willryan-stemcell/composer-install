@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+composer_path="${1:-$(which composer)}"
+working_directory="${2:-.}"
+php_path="${3:-$(which php)}"
+
+function test_composer {
+    "${php_path}" "${composer_path}" --version > /dev/null 2>&1
+}
+
+function validate_composer {
+    "${php_path}" "${composer_path}" \
+        validate \
+        --no-check-publish \
+        --no-check-version \
+        --working-dir "${working_directory}" \
+        > /dev/null 2>&1
+}
+
+if ! test_composer; then
+    echo "::error title=Composer Not Found::Unable to find Composer at '${composer_path}'"
+    exit 1
+fi
+
+composer_json="composer.json"
+composer_lock="composer.lock"
+
+if [ -n "${working_directory}" ]; then
+    if [ ! -d "${working_directory}" ]; then
+        echo "::error title=Working Directory Not Found::Unable to find working directory at '${working_directory}'"
+        exit 1
+    fi
+
+    composer_json="${working_directory}/composer.json"
+    composer_lock="${working_directory}/composer.lock"
+fi
+
+if [ ! -f "${composer_json}" ]; then
+    echo "::error title=composer.json Not Found::Unable to find composer.json at '${composer_json}'"
+    exit 1
+fi
+
+if ! validate_composer; then
+    echo "::error title=Invalid composer.json::The composer.json file at '${composer_json}' does not validate; run 'composer validate' to check for errors"
+    exit 1
+fi
+
+if [ ! -f "${composer_lock}" ]; then
+    echo "::notice title=composer.lock Not Found::Unable to find composer.lock at '${composer_lock}'"
+    composer_lock=""
+fi
+
+cache_dir="$($composer_path config cache-dir)"
+
+echo "::notice title=Composer Path::Composer path is '${composer_path}'"
+echo "::notice title=Composer Cache::Composer cache directory found at '${cache_dir}'"
+echo "::notice title=composer.json::File composer.json found at '${composer_json}'"
+echo "::notice title=composer.lock::File composer.lock path computed as '${composer_lock}'"
+echo "::set-output name=command::${composer_path}"
+echo "::set-output name=cache-dir::${cache_dir}"
+echo "::set-output name=json::${composer_json}"
+echo "::set-output name=lock::${composer_lock}"

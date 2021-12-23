@@ -11,5 +11,4 @@
 /conventional-commits.json  export-ignore
 /docs/                      export-ignore
 /SECURITY.md                export-ignore
-/subdirectory/              export-ignore
 /tests/                     export-ignore

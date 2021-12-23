@@ -1,0 +1,11 @@
+{
+    "name": "ramsey/composer-install-test-with-lock-file",
+    "description": "Tests composer-install when composer.lock file exists.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ben Ramsey",
+            "email": "ben@benramsey.com"
+        }
+    ]
+}

@@ -6,6 +6,7 @@ dependency_versions="${3:-locked}"
 composer_options="${4}"
 files_hash="${5}"
 custom_cache_key="${6}"
+working_directory="${7}"
 
 key=()
 restore_key=()
@@ -20,12 +21,16 @@ function join_by {
 if [ -n "${custom_cache_key}" ]; then
     key+=("${custom_cache_key}")
 else
-    key+=("${runner_os}" "php" "${php_version}" "composer")
+    key+=(
+        "${runner_os}"
+        "php"
+        "${php_version}"
+        "composer"
+        "${composer_options}"
+        "${dependency_versions}"
+        "${working_directory}"
+    )
 
-    key+=("${dependency_versions}")
-    restore_key=("$(join_by - ${key[@]/#/})-" "${restore_key[@]}")
-
-    key+=("${composer_options}")
     restore_key=("$(join_by - ${key[@]/#/})-" "${restore_key[@]}")
 
     key+=("${files_hash}")

@@ -40,7 +40,7 @@ jobs:
           - "--ignore-platform-reqs"
           - ""
         working-directory:
-          - "subdirectory"
+          - "tests/fixtures/with-lock-file"
           - ""
         ignore-cache:
           - "yes"

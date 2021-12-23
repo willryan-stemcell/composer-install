@@ -8,9 +8,9 @@ set timeout 3
 spawn ../../bin/cache_key.sh "Linux" "8.1.1" "lowest" "--ignore-platform-reqs --optimize-autoloader" "long-files-hash"
 match_max 100000
 
-expect -exact "::notice title=Primary Cache Key::Cache primary key is 'Linux-php-8.1.1-composer-lowest---ignore-platform-reqs---optimize-autoloader-long-files-hash'"
-expect -exact "::notice title=Restore Cache Keys::Cache restore keys are 'Linux-php-8.1.1-composer-lowest---ignore-platform-reqs---optimize-autoloader-, Linux-php-8.1.1-composer-lowest-'"
-expect -exact "::set-output name=key::Linux-php-8.1.1-composer-lowest---ignore-platform-reqs---optimize-autoloader-long-files-hash"
+expect -exact "::notice title=Primary Cache Key::Cache primary key is 'Linux-php-8.1.1-composer---ignore-platform-reqs---optimize-autoloader-lowest-long-files-hash'"
+expect -exact "::notice title=Restore Cache Keys::Cache restore keys are 'Linux-php-8.1.1-composer---ignore-platform-reqs---optimize-autoloader-lowest-'"
+expect -exact "::set-output name=key::Linux-php-8.1.1-composer---ignore-platform-reqs---optimize-autoloader-lowest-long-files-hash"
 expect eof
 
 set fp [open $gitHubEnvFile r]
@@ -18,8 +18,7 @@ set fileData [read $fp]
 close $fp
 
 set expectedValue "CACHE_RESTORE_KEY<<EOF
-Linux-php-8.1.1-composer-lowest---ignore-platform-reqs---optimize-autoloader-
-Linux-php-8.1.1-composer-lowest-
+Linux-php-8.1.1-composer---ignore-platform-reqs---optimize-autoloader-lowest-
 EOF
 "
 

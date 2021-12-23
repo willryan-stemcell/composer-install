@@ -3,6 +3,8 @@
 dependency_versions="${1:-locked}"
 additional_composer_options="${2}"
 working_directory="${3}"
+php_path="${4:-$(which php)}"
+composer_path="${5:-$(which composer)}"
 
 composer_command="update"
 composer_options=(
@@ -29,4 +31,4 @@ if [ -n "${working_directory}" ]; then
 fi
 
 echo "::notice title=Composer::Using the following Composer command: 'composer ${composer_command} ${composer_options[*]}'"
-composer "${composer_command}" ${composer_options[*]}
+"${php_path}" "${composer_path}" "${composer_command}" ${composer_options[*]}

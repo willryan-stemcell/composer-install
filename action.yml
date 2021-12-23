@@ -35,7 +35,7 @@ runs:
   using: "composite"
   steps:
     - name: "Determine PHP version"
-      id: "php-version"
+      id: "php"
       shell: "bash"
       run: "${GITHUB_ACTION_PATH}/bin/php_version.sh"
 
@@ -44,30 +44,37 @@ runs:
       shell: "bash"
       run: "${GITHUB_ACTION_PATH}/bin/should_cache.sh \"${{ inputs.ignore-cache }}\""
 
-    - name: "Determine Composer cache directory"
-      id: "composer-cache"
+    - name: "Determine Composer paths"
+      id: "composer"
       if: steps.should-cache.outputs.do-cache == 1
       shell: "bash"
-      run: "${GITHUB_ACTION_PATH}/bin/composer_cache_dir.sh"
+      run: |
+        ${GITHUB_ACTION_PATH}/bin/composer_paths.sh \
+          "" \
+          "${{ inputs.working-directory }}" \
+          "${{ steps.php.outputs.path }}"
 
     - name: "Determine cache key"
       id: "cache-key"
       if: steps.should-cache.outputs.do-cache == 1
       shell: "bash"
       run: |
+        composer_json="${{ steps.composer.outputs.json }}"
+        composer_lock="${{ steps.composer.outputs.lock }}"
         ${GITHUB_ACTION_PATH}/bin/cache_key.sh \
           "${{ runner.os }}" \
-          "${{ steps.php-version.outputs.php }}" \
+          "${{ steps.php.outputs.version }}" \
           "${{ inputs.dependency-versions }}" \
           "${{ inputs.composer-options }}" \
           "${{ hashFiles('**/composer.json', '**/composer.lock') }}" \
-          "${{ inputs.custom-cache-key }}"
+          "${{ inputs.custom-cache-key }}" \
+          "${{ inputs.working-directory }}"
 
     - name: "Cache Composer dependencies"
       if: steps.should-cache.outputs.do-cache == 1
       uses: "actions/cache@v2"
       with:
-        path: "${{ steps.composer-cache.outputs.directory }}"
+        path: "${{ steps.composer.outputs.cache-dir }}"
         key: "${{ steps.cache-key.outputs.key }}"
         restore-keys: |
           ${{ env.CACHE_RESTORE_KEY }}
@@ -78,4 +85,6 @@ runs:
         ${GITHUB_ACTION_PATH}/bin/composer_install.sh \
           "${{ inputs.dependency-versions }}" \
           "${{ inputs.composer-options }}" \
-          "${{ inputs.working-directory }}"
+          "${{ inputs.working-directory }}" \
+          "${{ steps.php.outputs.path }}" \
+          "${{ steps.composer.outputs.command }}"
