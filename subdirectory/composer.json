@@ -8,7 +8,7 @@
       "email": "ben@benramsey.com"
     }
   ],
-  "require-dev": {
-    "phpspec/phpspec": "^7.0"
+  "require": {
+    "symfony/console": "^6.0"
   }
 }
