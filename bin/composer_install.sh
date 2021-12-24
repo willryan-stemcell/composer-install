@@ -14,9 +14,9 @@ composer_options=(
 )
 
 case "${dependency_versions}" in
-    locked) composer_command="install" ;;
-    lowest) composer_options+=("--prefer-lowest" "--prefer-stable") ;;
     highest) ;;
+    lowest) composer_options+=("--prefer-lowest" "--prefer-stable") ;;
+    *) composer_command="install" ;;
 esac
 
 IFS=' '

@@ -18,6 +18,14 @@ function join_by {
     fi
 }
 
+# Ensure "highest", "lowest", and "locked" are the only values
+# allowed for dependency_versions.
+case "${dependency_versions}" in
+    highest) ;;
+    lowest) ;;
+    *) dependency_versions="locked" ;;
+esac
+
 if [ -n "${custom_cache_key}" ]; then
     key+=("${custom_cache_key}")
 else
