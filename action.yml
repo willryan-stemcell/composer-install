@@ -1,4 +1,4 @@
-name: "Install Composer Dependencies"
+name: "Install PHP Dependencies with Composer"
 author: "Ben Ramsey"
 description: >-
   Installs and caches Composer dependencies, accepting arguments to configure
