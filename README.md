@@ -1,7 +1,7 @@
 <h1 align="center">ramsey/composer-install</h1>
 
 <p align="center">
-    <strong>A GitHub Action to streamline installation of Composer dependencies.</strong>
+    <strong>A GitHub Action to streamline installation of PHP dependencies with Composer.</strong>
 </p>
 
 <p align="center">
