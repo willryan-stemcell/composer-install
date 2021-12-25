@@ -1,8 +1,8 @@
 name: "Install PHP Dependencies with Composer"
 author: "Ben Ramsey"
 description: >-
-  Installs and caches Composer dependencies, accepting arguments to configure
-  how and what to install.
+  Installs and caches PHP dependencies with Composer, accepting arguments to
+  configure how and what to install.
 
 branding:
   icon: download
