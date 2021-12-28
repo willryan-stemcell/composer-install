@@ -15,16 +15,12 @@ case "${dependency_versions}" in
     *) composer_command="install" ;;
 esac
 
-IFS=' '
-additional_options=("${additional_composer_options}")
-for option in "${additional_options[@]}"; do
-    composer_options+=("${option}")
-done
+read -r -a additional_options <<<"${additional_composer_options}"
+composer_options+=("${additional_options[@]}")
 
 if [ -n "${working_directory}" ]; then
-    composer_options+=("--working-dir")
-    composer_options+=("${working_directory}")
+    composer_options+=("--working-dir" "${working_directory}")
 fi
 
 echo "::debug::Using the following Composer command: 'composer ${composer_command} ${composer_options[*]}'"
-"${php_path}" "${composer_path}" "${composer_command}" ${composer_options[*]}
+"${php_path}" "${composer_path}" "${composer_command}" "${composer_options[@]}"

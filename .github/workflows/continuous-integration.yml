@@ -83,6 +83,15 @@ jobs:
         with:
           files: "./bin/coverage/codecov-result.json"
 
+  static-analysis:
+    name: "Static analysis"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout repository"
+        uses: "actions/checkout@v2"
+      - name: "Run shellcheck"
+        run: "shellcheck --exclude=SC2230 bin/*.sh tests/*.sh"
+
   run:
     needs: test
     name: "Run action"
