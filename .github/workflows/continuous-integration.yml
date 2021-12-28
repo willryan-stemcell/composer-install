@@ -5,8 +5,37 @@ name: "build"
 on: ["pull_request", "push"]
 
 jobs:
+  code-coverage:
+    name: "Code coverage"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout repository"
+        uses: "actions/checkout@v2"
+      - name: "Install expect"
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install expect
+      - name: "Set up Ruby"
+        uses: "actions/setup-ruby@v1"
+        with:
+          ruby-version: "2.7"
+      - name: "Install Ruby dependencies"
+        run: |
+          gem install bashcov
+          gem install codecov
+      - name: "Set up PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "latest"
+          tools: "composer:v2"
+          coverage: "none"
+      - name: "Run expect tests"
+        run: "bashcov --root ./bin -- ./tests/bash-test.sh tests/tests.sh"
+      - name: "Publish coverage report to Codecov"
+        uses: "codecov/codecov-action@v1"
+
   test:
-    name: "Expect Tests"
+    name: "Expect tests"
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
@@ -30,7 +59,7 @@ jobs:
         run: "composer test"
 
   run:
-    name: "Run Action"
+    name: "Run action"
     runs-on: "${{ matrix.operating-system }}"
     strategy:
       matrix:
