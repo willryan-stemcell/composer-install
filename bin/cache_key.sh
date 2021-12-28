@@ -33,8 +33,8 @@ restore_key=()
 # Ensure "highest", "lowest", and "locked" are the only values
 # allowed for dependency_versions.
 case "${dependency_versions}" in
-    highest) ;;
-    lowest) ;;
+    highest) dependency_versions="highest" ;;
+    lowest) dependency_versions="lowest" ;;
     *) dependency_versions="locked" ;;
 esac
 

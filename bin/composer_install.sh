@@ -10,7 +10,7 @@ composer_command="update"
 composer_options=("--no-interaction" "--no-progress" "--ansi")
 
 case "${dependency_versions}" in
-    highest) ;;
+    highest) composer_command="update" ;;
     lowest) composer_options+=("--prefer-lowest" "--prefer-stable") ;;
     *) composer_command="install" ;;
 esac
