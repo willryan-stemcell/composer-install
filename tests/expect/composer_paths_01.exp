@@ -5,6 +5,7 @@ spawn ../../bin/composer_paths.sh
 match_max 100000
 
 expect "::debug::Composer path is '*'\r
+::debug::Composer version *\r
 ::debug::Composer cache directory found at '*'\r
 ::debug::File composer.json found at './composer.json'\r
 ::debug::File composer.lock path computed as './composer.lock'\r
