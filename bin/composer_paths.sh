@@ -49,11 +49,11 @@ if [ ! -f "${composer_lock}" ]; then
     composer_lock=""
 fi
 
-composer_version="$(composer_path --version)"
+composer_version="$($composer_path --version)"
 cache_dir="$($composer_path config cache-dir)"
 
 echo "::debug::Composer path is '${composer_path}'"
-echo "::debug::Composer version is '${composer_version}'"
+echo "::debug::${composer_version}"
 echo "::debug::Composer cache directory found at '${cache_dir}'"
 echo "::debug::File composer.json found at '${composer_json}'"
 echo "::debug::File composer.lock path computed as '${composer_lock}'"
