@@ -1,7 +1,6 @@
 #!/usr/bin/env -S expect -f
 
 set gitHubEnvFile cache_key_04.txt
-file delete $gitHubEnvFile
 set ::env(GITHUB_ENV) $gitHubEnvFile
 
 set timeout 3
@@ -27,3 +26,6 @@ if { $expectedValue != $fileData } {
     puts $fileData
     exit 1
 }
+
+# Clean up
+file delete $gitHubEnvFile
