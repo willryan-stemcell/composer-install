@@ -59,8 +59,6 @@ runs:
       if: steps.should-cache.outputs.do-cache == 1
       shell: "bash"
       run: |
-        composer_json="${{ steps.composer.outputs.json }}"
-        composer_lock="${{ steps.composer.outputs.lock }}"
         ${GITHUB_ACTION_PATH}/bin/cache_key.sh \
           "${{ runner.os }}" \
           "${{ steps.php.outputs.version }}" \
@@ -87,4 +85,5 @@ runs:
           "${{ inputs.composer-options }}" \
           "${{ inputs.working-directory }}" \
           "${{ steps.php.outputs.path }}" \
-          "${{ steps.composer.outputs.command }}"
+          "${{ steps.composer.outputs.command }}" \
+          "${{ steps.composer.outputs.lock }}"

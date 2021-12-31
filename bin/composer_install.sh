@@ -5,6 +5,7 @@ additional_composer_options="${2}"
 working_directory="${3}"
 php_path="${4:-$(which php)}"
 composer_path="${5:-$(which composer)}"
+composer_lock="${6}"
 
 composer_command="update"
 composer_options=("--no-interaction" "--no-progress" "--ansi")
@@ -14,6 +15,11 @@ case "${dependency_versions}" in
     lowest) composer_options+=("--prefer-lowest" "--prefer-stable") ;;
     *) composer_command="install" ;;
 esac
+
+# If there is no composer.lock file, then use the `update` command.
+if [ -z "${composer_lock}" ]; then
+    composer_command="update"
+fi
 
 read -r -a additional_options <<<"${additional_composer_options}"
 composer_options+=("${additional_options[@]}")
