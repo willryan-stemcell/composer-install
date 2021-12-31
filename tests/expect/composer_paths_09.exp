@@ -1,0 +1,17 @@
+#!/usr/bin/env -S expect -f
+
+set timeout 3
+spawn ../../bin/composer_paths.sh "../fixtures/composer.phar"
+match_max 100000
+
+expect "::debug::Composer path is '../fixtures/composer.phar'\r
+::debug::Composer version 2.2.2 2021-12-29 14:15:27\r
+::debug::Composer cache directory found at '*'\r
+::debug::File composer.json found at './composer.json'\r
+::debug::File composer.lock path computed as './composer.lock'\r
+::set-output name=command::../fixtures/composer.phar\r
+::set-output name=cache-dir::*\r
+::set-output name=json::./composer.json\r
+::set-output name=lock::./composer.lock\r
+"
+expect eof
