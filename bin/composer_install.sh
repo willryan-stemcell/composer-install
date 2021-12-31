@@ -28,6 +28,6 @@ if [ -n "${working_directory}" ]; then
     composer_options+=("--working-dir" "${working_directory}")
 fi
 
-full_command="${composer_path} ${composer_command} ${composer_options[*]}"
+full_command="${php_path} ${composer_path} ${composer_command} ${composer_options[*]}"
 echo "::debug::Using the following Composer command: '${full_command}'"
 $full_command
