@@ -1,7 +1,12 @@
 #!/usr/bin/env -S expect -f
 
+# For testing environment variables written to GITHUB_ENV
 set gitHubEnvFile cache_key_02.txt
 set ::env(GITHUB_ENV) $gitHubEnvFile
+
+# For testing outputs variables written to GITHUB_OUTPUT
+set gitHubOutputFile cache_key_output_02.txt
+set ::env(GITHUB_OUTPUT) $gitHubOutputFile
 
 set timeout 3
 spawn ../../bin/cache_key.sh "Linux" "8.1.1" "" "" "long-files-hash"
@@ -9,9 +14,9 @@ match_max 100000
 
 expect -exact "::debug::Cache primary key is 'Linux-php-8.1.1-composer-locked-long-files-hash'"
 expect -exact "::debug::Cache restore keys are 'Linux-php-8.1.1-composer-locked-'"
-expect -exact "::set-output name=key::Linux-php-8.1.1-composer-locked-long-files-hash"
 expect eof
 
+# Confirm environment variables.
 set fp [open $gitHubEnvFile r]
 set fileData [read $fp]
 close $fp
@@ -27,5 +32,19 @@ if { $expectedValue != $fileData } {
     exit 1
 }
 
+# Verify output variables have been set correctly.
+set fp [open $gitHubOutputFile r]
+set fileData [read $fp]
+close $fp
+
+set expectedValue "key=Linux-php-8.1.1-composer-locked-long-files-hash\n"
+
+if { $expectedValue != $fileData } {
+    puts "\nExpected output variable does not match. Received:\n"
+    puts $fileData
+    exit 1
+}
+
 # Clean up
 file delete $gitHubEnvFile
+file delete $gitHubOutputFile
