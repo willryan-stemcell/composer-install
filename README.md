@@ -174,6 +174,16 @@ even more specific, you can specify a suffix to be added to the cache key via th
 
 :warning: Note: specifying a `custom-cache-key` will take precedence over the `custom-cache-suffix`.
 
+### Fork and private repositories
+Sometimes it's needed to use the `repositories` key in your `composer.json` to pull in forks, PRs with patches or private repositories. In this case, your GitHub Action may start failing with a `Could not authenticate against github.com` error message. To solve this, you need to add a GitHub Personal Access token, and this bit to your Action configuration:
+```yaml
+env:
+   COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.COMPOSER_AUTH }}"}}'
+```
+In this example, `COMPOSER_AUTH` is the name of the secret that you'll need to create. To access public repositories, the `public_repo` scope is sufficient, while for private repositories (that you can access), `read:project` will be needed. 
+
+For more information on how to do that on your repository, see [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and [Creating encrypted secrets for a repository](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) on GitHub documentation.
+
 ### Matrix Example
 
 GitHub Workflows allow you to set up a [job matrix](https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix),
